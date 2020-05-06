@@ -1,0 +1,21 @@
+(Project.config "title" "sim-carp")
+(Project.config "output-directory" ".")
+
+(deftype Agent [x Float, y Float])
+
+(defn move-agent [agent]
+  (=> agent
+      (Agent.update-x &inc)
+      (Agent.update-y &dec)))
+
+(defn create-world [n]
+  (Array.repeat n &(fn [] (Agent.init (random-between 0.0f 100.0f)
+                                      (random-between 0.0f 100.0f)))))
+
+(defn update-world [world steps]
+  (Control.iterate steps &(fn [w] (Array.endo-map &move-agent w)) world))
+
+(defn main []
+  (let [start (create-world 10000)
+        result (update-world start 10000)]
+    (println* "Done updating " (Array.length &result) " agents.")))
